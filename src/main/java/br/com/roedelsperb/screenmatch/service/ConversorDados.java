@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class ConversorDados implements IConverteDados{
-    private ObjectMapper mapper = new ObjectMapper();
+    private ObjectMapper mapper = new ObjectMapper(); //serve como um desserializador do json.
 
     @Override
     public <T> T obterDados(String json, Class<T> classe) {
@@ -12,6 +12,7 @@ public class ConversorDados implements IConverteDados{
             return mapper.readValue(json,classe);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
+
         }
     }
 }

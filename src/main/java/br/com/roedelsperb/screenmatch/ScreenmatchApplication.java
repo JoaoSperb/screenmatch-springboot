@@ -1,5 +1,6 @@
 package br.com.roedelsperb.screenmatch;
 
+import br.com.roedelsperb.screenmatch.model.DadosEpisodio;
 import br.com.roedelsperb.screenmatch.model.DadosSerie;
 import br.com.roedelsperb.screenmatch.service.ConsumoApi;
 import br.com.roedelsperb.screenmatch.service.ConversorDados;
@@ -23,5 +24,9 @@ public class ScreenmatchApplication implements CommandLineRunner {
 		ConversorDados conversor = new ConversorDados();
 		DadosSerie serie = conversor.obterDados(json,DadosSerie.class);
 		System.out.println(serie);
+
+		json = consumoApi.obterDados("https://www.omdbapi.com/?t=lost&season=1&episode=3&apikey=3a7f6482");
+		DadosEpisodio dadosEpisodio = conversor.obterDados(json,DadosEpisodio.class);
+		System.out.println(dadosEpisodio);
 	}
 }
