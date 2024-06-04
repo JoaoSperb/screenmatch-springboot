@@ -13,7 +13,8 @@ public class ScreenmatchApplication implements CommandLineRunner {
 	}
 
 	@Override
-	public void run(String... args) throws Exception {
+	public void run(String... args) //throws Exception
+	{
 		Principal principal = new Principal();
 		principal.exibirMenu();
 	}

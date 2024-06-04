@@ -13,9 +13,9 @@ import java.util.Scanner;
 import java.util.stream.Collectors;
 
 public class Principal {
-    private Scanner scanner = new Scanner(System.in);
-    private ConversorDados conversorDados = new ConversorDados();
-    private ConsumoApi consumoApi = new ConsumoApi();
+    private final Scanner scanner = new Scanner(System.in);
+    private final ConversorDados conversorDados = new ConversorDados();
+    private final ConsumoApi consumoApi = new ConsumoApi();
     private final String API_KEY = "&apikey=3a7f6482";
     private final String ENDERECO = "https://www.omdbapi.com/?t=";
 
