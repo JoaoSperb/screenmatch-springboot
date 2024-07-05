@@ -3,6 +3,7 @@ package br.com.roedelsperb.screenmatch.principal;
 import br.com.roedelsperb.screenmatch.model.DadosEpisodio;
 import br.com.roedelsperb.screenmatch.model.DadosSerie;
 import br.com.roedelsperb.screenmatch.model.DadosTemporada;
+import br.com.roedelsperb.screenmatch.model.Episodio;
 import br.com.roedelsperb.screenmatch.service.ConsumoApi;
 import br.com.roedelsperb.screenmatch.service.ConversorDados;
 
@@ -31,15 +32,25 @@ public class Principal {
 
         DadosSerie dadosSerie = conversorDados.obterDados(json,DadosSerie.class);
         List<DadosTemporada> temporadas = new ArrayList<>();
+
         for(int i = 1; i<=dadosSerie.totalTemporadas();i++){
             json = consumoApi.obterDados(ENDERECO + serie +"&season="+ i + API_KEY);
             DadosTemporada dadosTemporada = conversorDados.obterDados(json,DadosTemporada.class);
             temporadas.add(dadosTemporada);
         }
+
+
         List<DadosEpisodio> dadosEpisodios = temporadas.stream()
                 .flatMap(t -> t.episodios().stream())//flatMap serve para juntar elementos de vaarias listas
                 .collect(Collectors.toList());//collectors serve para listas que poderao ser alteradas no futuro
                                               //toList servee para listas que nao serao alteradas.
+
+        List<Episodio> episodios = temporadas.stream()
+                .flatMap(t -> t.episodios().stream()
+                        .map(d -> new Episodio(t.numero(),d) ))
+                .collect(Collectors.toList());
+
+        List<Episodio> episodioList = new ArrayList<>();
 
         while (leitura!=0){
             System.out.println("-------------------------------------------------------------------");
@@ -75,6 +86,7 @@ public class Principal {
                         .forEach(System.out::println);
             }
         }
+
 
     }
 }
