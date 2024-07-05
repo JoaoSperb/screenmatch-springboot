@@ -1,11 +1,12 @@
 package br.com.roedelsperb.screenmatch.model;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 
 public class Episodio {
-        private Integer temporada;
-        private String titulo;
-        private Integer numEpisodio;
+        private final Integer temporada;
+        private final String titulo;
+        private final Integer numEpisodio;
         private LocalDate data;
         private double avaliacao;
 
@@ -13,48 +14,19 @@ public class Episodio {
                 this.temporada = temporada;
                 this.titulo = dadosEpisodio.titulo();
                 this.numEpisodio = dadosEpisodio.numEpisodio();
-                this.avaliacao = Double.valueOf(dadosEpisodio.avaliacao());
+                try{
+                        this.avaliacao = Double.parseDouble(dadosEpisodio.avaliacao());
+                }
+                catch (NumberFormatException ex){
+                        this.avaliacao = 0.0;
+                }
+                try {
+                        this.data = LocalDate.parse(dadosEpisodio.data());
+                }
+                catch (DateTimeParseException ex){ //pra descobrir a exceção, executar o codigo e ver quais possiveis erros podem ocorrer,
+                        this.data = null;          //nesse caso foi DateTImeParse, no outro foi NumberFormatException
+                }
 
-        }
-
-        public int getTemporada() {
-                return temporada;
-        }
-
-        public void setTemporada(int temporada) {
-                this.temporada = temporada;
-        }
-
-        public String getTitulo() {
-                return titulo;
-        }
-
-        public void setTitulo(String titulo) {
-                this.titulo = titulo;
-        }
-
-        public Integer getNumEpisodio() {
-                return numEpisodio;
-        }
-
-        public void setNumEpisodio(Integer numEpisodio) {
-                this.numEpisodio = numEpisodio;
-        }
-
-        public LocalDate getData() {
-                return data;
-        }
-
-        public void setData(LocalDate data) {
-                this.data = data;
-        }
-
-        public double getAvaliacao() {
-                return avaliacao;
-        }
-
-        public void setAvaliacao(double avaliacao) {
-                this.avaliacao = avaliacao;
         }
 
         @Override
