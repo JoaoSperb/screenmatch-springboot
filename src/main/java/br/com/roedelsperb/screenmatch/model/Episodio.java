@@ -28,6 +28,19 @@ public class Episodio {
                 }
 
         }
+        public LocalDate getData(){
+                return data;
+        }
+
+        public String getEpisodio(){
+                return titulo;
+        }
+
+        public Integer getTemporada(){
+                return temporada;
+        }
+
+
 
         @Override
         public String toString() {

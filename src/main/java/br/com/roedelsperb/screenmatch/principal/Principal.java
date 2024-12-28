@@ -1,17 +1,19 @@
 package br.com.roedelsperb.screenmatch.principal;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Scanner;
+import java.util.stream.Collectors;
+
 import br.com.roedelsperb.screenmatch.model.DadosEpisodio;
 import br.com.roedelsperb.screenmatch.model.DadosSerie;
 import br.com.roedelsperb.screenmatch.model.DadosTemporada;
 import br.com.roedelsperb.screenmatch.model.Episodio;
 import br.com.roedelsperb.screenmatch.service.ConsumoApi;
 import br.com.roedelsperb.screenmatch.service.ConversorDados;
-
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Scanner;
-import java.util.stream.Collectors;
 
 public class Principal {
     private final Scanner scanner = new Scanner(System.in);
@@ -33,10 +35,14 @@ public class Principal {
         DadosSerie dadosSerie = conversorDados.obterDados(json,DadosSerie.class);
         List<DadosTemporada> temporadas = new ArrayList<>();
 
-        for(int i = 1; i<=dadosSerie.totalTemporadas();i++){
-            json = consumoApi.obterDados(ENDERECO + serie +"&season="+ i + API_KEY);
-            DadosTemporada dadosTemporada = conversorDados.obterDados(json,DadosTemporada.class);
-            temporadas.add(dadosTemporada);
+        if (dadosSerie != null && dadosSerie.totalTemporadas() != null) {
+            for(int i = 1; i<=dadosSerie.totalTemporadas();i++){
+                json = consumoApi.obterDados(ENDERECO + serie +"&season="+ i + API_KEY);
+                DadosTemporada dadosTemporada = conversorDados.obterDados(json,DadosTemporada.class);
+                temporadas.add(dadosTemporada);
+            }
+        } else {
+            System.out.println("Erro: Não foi possível obter o total de temporadas da série.");
         }
 
 
@@ -50,7 +56,6 @@ public class Principal {
                         .map(d -> new Episodio(t.numero(),d) ))
                 .collect(Collectors.toList());
 
-        List<Episodio> episodioList = new ArrayList<>();
 
         while (leitura!=0){
             System.out.println("-------------------------------------------------------------------");
@@ -59,6 +64,9 @@ public class Principal {
             System.out.println("Digite 2 para dados gerais das temporadas.");
             System.out.println("Digite 3 para receber o nome de todos os episódios das temporadas");
             System.out.println("Digite 4 para saber os 5 episodios melhor avaliados da serie.");
+            System.out.println("Digite 5 para digitar um ano e ver os epsodios lançados nesse ano.");
+            System.out.println("Digite 6 para digitar um ano e ver os episodios lançados a partir desse ano.");
+            System.out.println("Digite 7 caso lembre apenas de umas palavras do titulo de episodio.");
             System.out.println("Digite 0 para sair.");
             System.out.println("-------------------------------------------------------------------");
             leitura = scanner.nextInt();
@@ -85,6 +93,54 @@ public class Principal {
                         .limit(5)
                         .forEach(System.out::println);
             }
+            if(leitura==5){
+                System.out.println("Digite o ano que você deseja saber os episódios lançados: ");
+                int ano = scanner.nextInt();
+                DateTimeFormatter formatador = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                episodios.stream()
+                        .filter(e -> e.getData()!=null)
+                        .filter(e -> e.getData().getYear() == ano)
+                        .forEach(e -> System.out.println(
+                            "\nTemporada: " + e.getTemporada() + 
+                            "\nEpisódio: " + e.getEpisodio() + 
+                            "\nData:" + e.getData().format(formatador)
+                        ));
+            }
+            if(leitura==6){
+                DateTimeFormatter formatador = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                System.out.println("A partir de qual ano você quer ver os episodios?");
+                int ano = scanner.nextInt();
+                LocalDate dataInicial = LocalDate.of(ano,1,1);
+                episodios.stream()
+                        .filter(e -> e.getData() != null && e.getData().isAfter(dataInicial))
+                        .forEach(e -> System.out.println(
+                            "\nTemporada: " + e.getTemporada() + 
+                            "\nEpisódio: " + e.getEpisodio() + 
+                            "\nData:" + e.getData().format(formatador)
+                        ));
+
+            }
+            if(leitura==7){
+                System.out.println("Digite a palavra.");
+                String trechoEp = scanner.next();
+
+                //List<Episodio> episodiosTrecho = episodios.stream()
+                //    .filter(e -> e.getEpisodio().contains(trechoEp))
+                //    .collect(Collectors.toList());
+                List<String> episodiosTrecho = episodios.stream()
+                                            .filter(e -> e.getEpisodio().toLowerCase().contains(trechoEp.toLowerCase()))
+                                            .map(Episodio::getEpisodio)
+                                            .collect(Collectors.toList());
+                
+                if(episodiosTrecho.isEmpty()){
+                    System.out.println("Nenhum episodio com essa combinação foi encontrado.");
+                }
+                else{
+                    System.out.println("Episódio encontrado!");
+                    System.out.println(episodiosTrecho);
+                }
+            }
+
         }
 
 
