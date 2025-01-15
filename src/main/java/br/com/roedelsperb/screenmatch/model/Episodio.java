@@ -40,6 +40,10 @@ public class Episodio {
                 return temporada;
         }
 
+        public double getAvaliacao(){
+                return avaliacao;
+        }
+
 
 
         @Override

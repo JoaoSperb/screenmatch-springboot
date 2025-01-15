@@ -4,7 +4,9 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.DoubleSummaryStatistics;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
@@ -56,6 +58,23 @@ public class Principal {
                         .map(d -> new Episodio(t.numero(),d) ))
                 .collect(Collectors.toList());
 
+        Map<Integer, Double> avaliacaoTemporada = episodios.stream()
+                                            .filter(e -> e.getAvaliacao() > 0.0)
+                                            .collect(Collectors.groupingBy(Episodio::getTemporada,
+                                                    Collectors.averagingDouble(Episodio::getAvaliacao)));
+        System.out.println(avaliacaoTemporada);
+
+        DoubleSummaryStatistics est = episodios.stream()
+                            .filter(e -> e.getAvaliacao() > 0.0)
+                            .collect(Collectors.summarizingDouble(Episodio::getAvaliacao));
+                            
+        System.out.println("Média: " + est.getAverage());
+        System.out.println("Melhor episódio: " + est.getMax());
+        System.out.println("Pior episódio: " + est.getMin());
+        System.out.println("Quantidade: " + est.getCount());
+
+        
+                                            
 
         while (leitura!=0){
             System.out.println("-------------------------------------------------------------------");
